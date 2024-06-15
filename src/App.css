@@ -148,6 +148,7 @@ body {
   padding: 15px;
   padding-top: 5px;
   border-width: 1px;
+  box-shadow: 0px 8px 16px 0px rgba(0, 0, 0, 0.2);
 }
 .movie-box {
   width: 100%;
