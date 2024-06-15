@@ -36,3 +36,156 @@
     transform: rotate(360deg);
   }
 }
+
+.container {
+  padding: 20px;
+}
+
+.filter-container {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 20px;
+}
+
+.search-input {
+  padding: 10px;
+  font-size: 16px;
+  flex: 1;
+  width: 60%;
+  height: 36px;
+}
+
+.dropdown {
+  position: relative;
+  display: inline-block;
+  width: 20%;
+}
+
+.dropdown-toggle {
+  padding: 10px;
+  font-size: 16px;
+  cursor: pointer;
+  position: relative;
+  width: 100%;
+  height: 60px;
+}
+
+.dropdown-name {
+  font-weight: bold;
+  text-align: left;
+  margin-right: 150px;
+}
+
+.arrow {
+  border: solid black;
+  border-width: 0 2px 2px 0;
+  display: inline-block;
+  padding: 4px;
+  position: absolute;
+  border-color: #000;
+  right: 20px;
+  top: calc(50% - 5px); 
+  transform: translateY(-50%);
+  transform-origin: 65% 65%;
+  transition: transform 0.3s ease;
+}
+
+.up {
+  transform: rotate(-135deg);
+  -webkit-transform: rotate(-135deg);
+}
+
+.down {
+  transform: rotate(45deg);
+  -webkit-transform: rotate(45deg);
+}
+
+.dropdown-menu {
+  max-width: 240px;
+  max-height: 300px;
+  display: flex;
+  flex-direction: column;
+  position: absolute;
+  background-color: #f9f9f9;
+  box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+  padding: 12px 16px;
+  z-index: 1;
+}
+
+.checkbox-label {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  margin-bottom: 5px;
+}
+
+.star-rating {
+  display: flex;
+  align-items: center;
+}
+
+.star {
+  margin-right: 2px;
+}
+
+
+.movie-list {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+  grid-gap: 20px;
+}
+
+.movie-box {
+  position: relative;
+  border: 1px solid #ccc;
+  padding: 15px;
+  border-radius: 8px;
+  background-color: #f9f9f9;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.genre {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  background-color: #333;
+  color: #fff;
+  padding: 5px 10px;
+  font-size: 14px;
+  border-radius: 5px;
+}
+
+.movie-title {
+  font-size: 20px;
+  font-weight: bold;
+  margin-bottom: 10px;
+}
+
+.movie-star-rating {
+  display: flex;
+  margin-bottom: 10px;
+}
+
+.movie-star {
+  font-size: 24px;
+  color: #000;
+  margin-right: 5px;
+}
+
+.partial-star {
+  display: inline-block; /* Ensures proper positioning */
+  position: relative; /* Allows layering of elements */
+  overflow: hidden; /* Conceals overflowing content */
+}
+
+.partial-star::after {
+  content: ""; /* Creates a pseudo-element for the colored portion */
+  position: absolute; /* Positions the pseudo-element on top */
+  top: 0;
+  left: 0;
+  width: 50%; /* Adjust this percentage to control the filled area */
+  height: 100%;
+  background: linear-gradient(to right, #000 50%); /* Your gradient */
+}
