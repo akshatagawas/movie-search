@@ -37,7 +37,6 @@ const Dropdown = ({
                 value={option}
                 onChange={() => onOptionChange(option)}
                 checked={selectedOptions.includes(option)}
-                style={{ display: type === "rating" ? "none" : "inline" }}
               />
               {type === "rating" ? (
                 <div className="star-rating">
