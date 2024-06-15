@@ -1,6 +1,8 @@
 import React, { useState, useRef, useEffect } from "react";
 import "./App.css";
-import { FaStar } from "react-icons/fa";
+import SearchInput from "./components/Search";
+import Dropdown from "./components/Dropdown";
+import MovieList from "./components/Movies";
 
 const moviesData = [
   { title: "The Matrix", rating: 7.5, category: "Action" },
@@ -16,7 +18,7 @@ const App = () => {
   const [selectedCategories, setSelectedCategories] = useState([]);
   const [ratingDropdownOpen, setRatingDropdownOpen] = useState(false);
   const [categoryDropdownOpen, setCategoryDropdownOpen] = useState(false);
-  const [displayMovies, setDisplayMovies] = useState(false); 
+  const [displayMovies, setDisplayMovies] = useState(false);
 
   const ratingRef = useRef(null);
   const categoryRef = useRef(null);
@@ -42,7 +44,11 @@ const App = () => {
   }, []);
 
   useEffect(() => {
-    if (selectedRatings.length > 0 || selectedCategories.length > 0 || searchTerm !== "") {
+    if (
+      selectedRatings.length > 0 ||
+      selectedCategories.length > 0 ||
+      searchTerm !== ""
+    ) {
       setDisplayMovies(true);
     } else {
       setDisplayMovies(false);
@@ -56,7 +62,10 @@ const App = () => {
   const handleRatingChange = (rating) => {
     if (rating === "any") {
       if (selectedRatings.length === 0 || !selectedRatings.includes("any")) {
-        setSelectedRatings(["any", ...Array.from({ length: 10 }, (_, index) => index + 1)]);
+        setSelectedRatings([
+          "any",
+          ...Array.from({ length: 10 }, (_, index) => index + 1),
+        ]);
       } else {
         setSelectedRatings([]);
       }
@@ -66,37 +75,66 @@ const App = () => {
       if (selectedRatings.includes("any")) {
         setSelectedRatings((prevSelectedRatings) =>
           prevSelectedRatings.includes(ratingToUse)
-            ? prevSelectedRatings.filter((r) => r !== ratingToUse && r !== "any")
-            : [...prevSelectedRatings, ratingToUse]
+            ? prevSelectedRatings.filter(
+                (r) => r !== ratingToUse && r !== "any",
+              )
+            : [...prevSelectedRatings, ratingToUse],
         );
       } else {
         setSelectedRatings((prevSelectedRatings) =>
           prevSelectedRatings.includes(ratingToUse)
             ? prevSelectedRatings.filter((r) => r !== ratingToUse)
-            : [...prevSelectedRatings, ratingToUse]
+            : [...prevSelectedRatings, ratingToUse],
         );
       }
     }
   };
 
   const handleCategoryChange = (category) => {
-    setSelectedCategories((prevSelectedCategories) =>
-      prevSelectedCategories.includes(category)
-        ? prevSelectedCategories.filter((c) => c !== category)
-        : [...prevSelectedCategories, category]
-    );
+    if (category === "any") {
+      if (
+        selectedCategories.length === 0 ||
+        !selectedCategories.includes("any")
+      ) {
+        setSelectedCategories([
+          "any",
+          ...new Set(moviesData.map((movie) => movie.category)),
+        ]);
+      } else {
+        setSelectedCategories([]);
+      }
+    } else {
+      if (selectedCategories.includes("any")) {
+        setSelectedCategories((prevSelectedCategories) =>
+          prevSelectedCategories.includes(category)
+            ? prevSelectedCategories.filter(
+                (c) => c !== category && c !== "any",
+              )
+            : [...prevSelectedCategories, category],
+        );
+      } else {
+        setSelectedCategories((prevSelectedCategories) =>
+          prevSelectedCategories.includes(category)
+            ? prevSelectedCategories.filter((c) => c !== category)
+            : [...prevSelectedCategories, category],
+        );
+      }
+    }
   };
 
   const filteredMovies = moviesData.filter((movie) => {
-    const matchesSearchTerm =
-      movie.title.toLowerCase().includes(searchTerm.toLowerCase());
+    const matchesSearchTerm = movie.title
+      .toLowerCase()
+      .includes(searchTerm.toLowerCase());
 
-    const matchesRating = selectedRatings.includes("any") ||
+    const matchesRating =
+      selectedRatings.includes("any") ||
       selectedRatings.length === 0 ||
-      selectedRatings.some(r => Math.floor(movie.rating) === r);
+      selectedRatings.some((r) => Math.floor(movie.rating) === r);
 
     const matchesCategory =
-      selectedCategories.length === 0 || selectedCategories.includes(movie.category);
+      selectedCategories.length === 0 ||
+      selectedCategories.includes(movie.category);
 
     return matchesSearchTerm && matchesRating && matchesCategory;
   });
@@ -118,129 +156,32 @@ const App = () => {
   return (
     <div className="container">
       <div className="filter-container">
-        <input
-          type="text"
-          placeholder="Enter movie name"
-          value={searchTerm}
-          onChange={handleSearchChange}
-          onFocus={() => setSearchTerm("")}
-          className="search-input"
+        <SearchInput
+          searchTerm={searchTerm}
+          onSearchChange={handleSearchChange}
         />
-        <div className="dropdown" ref={ratingRef}>
-          <button
-            className="dropdown-toggle"
-            onClick={toggleRatingDropdown}
-          >
-            <span className="dropdown-name">Rating</span>
-            <span className={`arrow ${ratingDropdownOpen ? "up" : "down"}`}></span>
-          </button>
-          {ratingDropdownOpen && (
-            <div className="dropdown-menu">
-              <label className="checkbox-label">
-                <input
-                  type="checkbox"
-                  value="any"
-                  onChange={() => handleRatingChange("any")}
-                  checked={selectedRatings.includes("any")}
-                />
-                Any
-              </label>
-              {Array.from({ length: 10 }, (_, index) => index + 1).map((rating) => (
-                <label key={rating} className="checkbox-label">
-                  <input
-                    type="checkbox"
-                    value={rating}
-                    onChange={() => handleRatingChange(rating)}
-                    checked={selectedRatings.includes(rating)}
-                  />
-                  <div className="star-rating">
-                    {Array.from({ length: 10 }, (_, i) => (
-                      <FaStar
-                        key={i}
-                        color={i < rating ? "#000" : "#e4e5e9"}
-                        className="star"
-                      />
-                    ))}
-                  </div>
-                </label>
-              ))}
-            </div>
-          )}
-        </div>
-        <div className="dropdown" ref={categoryRef}>
-          <button
-            className="dropdown-toggle"
-            onClick={toggleCategoryDropdown}
-          >
-            <span className="dropdown-name">Category</span>
-            <span className={`arrow ${categoryDropdownOpen ? "up" : "down"}`}></span>
-          </button>
-          {categoryDropdownOpen && (
-            <div className="dropdown-menu">
-              {[...new Set(moviesData.map((movie) => movie.category))].map(
-                (category) => (
-                  <label key={category} className="checkbox-label">
-                    <input
-                      type="checkbox"
-                      value={category}
-                      onChange={() => handleCategoryChange(category)}
-                      checked={selectedCategories.includes(category)}
-                    />
-                    {category}
-                  </label>
-                )
-              )}
-            </div>
-          )}
-        </div>
+        <Dropdown
+          title="Rating"
+          options={Array.from({ length: 10 }, (_, index) => index + 1)}
+          selectedOptions={selectedRatings}
+          onOptionChange={handleRatingChange}
+          isOpen={ratingDropdownOpen}
+          toggleDropdown={toggleRatingDropdown}
+          type="rating"
+          refProp={ratingRef}
+        />
+        <Dropdown
+          title="Genre"
+          options={[...new Set(moviesData.map((movie) => movie.category))]}
+          selectedOptions={selectedCategories}
+          onOptionChange={handleCategoryChange}
+          isOpen={categoryDropdownOpen}
+          toggleDropdown={toggleCategoryDropdown}
+          type="category"
+          refProp={categoryRef}
+        />
       </div>
-      {displayMovies && (
-        <div className="movie-list-container">
-          {filteredMovies.length > 0 ? (
-            <div className="movie-box-container">
-              {filteredMovies.map((movie, index) => (
-                <div key={movie.title} className="movie-box">
-                  <h3 className="movie-title">{movie.title}</h3>
-                  
-                  <div className="star-rating">
-                    {Array.from({ length: 10 }, (_, i) => {
-                      // Determine the fill color for each star
-                      let starColor;
-                      if (i < Math.floor(movie.rating)) {
-                        // Full star
-                        starColor = "#000";
-                      } else if (i === Math.floor(movie.rating)) {
-                        // Partial star based on decimal part
-                        const decimalPart = movie.rating - Math.floor(movie.rating);
-
-                        starColor =  "linear-gradient(to right, #1fa2ff, #12d8fa, #a6ffcb)";
-                        console.log(decimalPart);
-                      } else {
-                        // Empty star
-                        starColor = "#e4e5e9";
-                      }
-                      
-                      // Render the star component with the determined color
-                      return(
-                        <>
-                          <div className="partial-star">
-                            <FaStar key={i} color={starColor} className="star" />
-                          </div>
-                        </>
-                      ) 
-                      
-                    })}
-                  </div>
-
-                  <span className="genre">{movie.category}</span>
-                </div>
-              ))}
-            </div>
-          ) : (
-            <p>No movies found.</p>
-          )}
-        </div>
-      )}
+      {displayMovies && <MovieList movies={filteredMovies} />}
     </div>
   );
 };
